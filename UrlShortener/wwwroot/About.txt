@@ -1,0 +1,13 @@
+How does our service work?
+
+It's very simple!
+
+To shorten your URL, follow these steps:
+
+Register an account.
+Go to the page...
+Paste your link and click the "Confirm" button.
+That's it! You will immediately be redirected to a table where your original URL and the shortened URL will appear. You will also have two available functions: view and delete. It's that easy!
+
+Enjoy using the service!
+

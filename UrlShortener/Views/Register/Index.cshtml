@@ -1,0 +1,63 @@
+﻿@model User
+
+<div style="display: flex; justify-content: center;">
+    <div class="card shadow border-0 mt-2 col-4">
+        <div class="card-header ml-0 bg-black py-2">
+            <div class="row">
+                <div class="col text-center">
+                    @if (User.IsInRole(StaticData.Role_Admin))
+                    {
+                        <h2 class="py-2 text-white">Реєстрація - Портал Адміна</h2>
+                    }
+                    else
+                    {
+                        <h2 class="py-2 text-white">Реєстрація</h2>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="row pt-3">
+                <div class="col">
+                    <form asp-area="Customer" asp-controller="Register"  asp-action="Index" method="post" class="row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Login"  class="form-control" aria-required="true" placeholder="username" />
+                            <label asp-for="Login">Login</label>
+                            <span asp-validation-for="Login" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" type="password" class="form-control" aria-required="true" placeholder="password" />
+                            <label asp-for="Password">Пароль</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" aria-required="true" placeholder="Підтвердити пароль" />
+                            <label for="confirmPassword">Підтвердити пароль<label>
+                        </div>
+                        @if(User.IsInRole(StaticData.Role_Admin))
+                        {
+                            <div class="form-floating mb-3">
+                                <select asp-for="role" asp-items="ViewBag.List" class="form-select" aria-required="true" placeholder="Role">
+                                    <option disabled selected>--Оберіть роль--</option>
+                                </select>
+                                <span asp-validation-for="role" class="text-danger"></span>
+                            </div>
+                        }
+                        <div>
+                            <button id="registerSubmit" type="submit" class="btn bg-black text-white w-100">Підтвердити</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
