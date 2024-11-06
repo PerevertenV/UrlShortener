@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Services.IServices;
 using System.Security.Claims;
 using USh.DataAccess.Repository;
 using USh.DataAccess.Repository.IRepository;
@@ -9,10 +10,13 @@ namespace UrlShortener.Controllers
     public class DomenController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public DomenController(IUnitOfWork unitOfWork)
+        private readonly IService _service;
+        protected int userId;
+        public DomenController(IUnitOfWork unitOfWork, IService service)
         {
             _unitOfWork = unitOfWork;
-                
+            _service = service;
+            userId = _service.User.GetUserId();
         }
 
         public IActionResult Index()
@@ -35,10 +39,7 @@ namespace UrlShortener.Controllers
                 return View();
 			}
 
-            var user = HttpContext.User;
-            var userId = user.FindFirstValue("UserID");
-
-            domen.UserId = int.Parse(userId);
+            domen.UserId = userId;
             domen.CreatedDate = DateOnly.FromDateTime(DateTime.Now);
 
             _unitOfWork.Domen.Add(domen);
@@ -51,18 +52,12 @@ namespace UrlShortener.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var user = HttpContext.User;
-            var userId = user.FindFirstValue("UserID");
-
-            User userFromDb = _unitOfWork.User.GetFirstOrDefault(u => u.ID == int.Parse(userId));
-
-            List<Domen> ObjectsFromDb = User.IsInRole("Admin") ? _unitOfWork.Domen
-                .GetAll().ToList() : _unitOfWork.Domen.GetAll(u =>
-                    u.UserId == userFromDb.ID).ToList();
+            List<Domen> ObjectsFromDb = User.IsInRole("Admin") ? _unitOfWork.Domen.GetAll().ToList() 
+                : _unitOfWork.Domen.GetAll(u => u.UserId == userId).ToList();
 
             return Json(new { data = ObjectsFromDb });
         }
-        [HttpDelete]
+
         [HttpDelete]
         public IActionResult Delete(int? id)
         {
@@ -71,8 +66,6 @@ namespace UrlShortener.Controllers
             {
                 return Json(new { success = false, message = "Помилка під час видалення" });
             }
-
-            List<Domen> urls = _unitOfWork.Domen.GetAll().ToList();
             _unitOfWork.Domen.Delete(DomenToBeDeleted);
 
             List<URL> urlsFromDB = _unitOfWork.Url.GetAll(u => u.domenId == id).ToList();
@@ -84,7 +77,7 @@ namespace UrlShortener.Controllers
                 }
             }
 
-            return Json(new { success = true, message = "Url видалено успішно" });
+            return Json(new { success = true, message = "Домен видалено успішно" });
         }
         #endregion
     }

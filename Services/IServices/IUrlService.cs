@@ -9,5 +9,8 @@ namespace Services.IServices
     public interface IUrlService
     {
         public KeyValuePair<string, int> CreateShortUrl(string domen);
+
+        public KeyValuePair<string, int>? GenerateRandomTask();
     }
+
 }

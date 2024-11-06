@@ -34,6 +34,11 @@ namespace UrlShortener.Controllers
             return View();
         }
 
+        public IActionResult VerifiUser()
+        {
+            return View(_service.Url.GenerateRandomTask());
+        }
+
         public IActionResult AddCheckShortUrl(int? id) //add and check in one method
         {
             var user = HttpContext.User;

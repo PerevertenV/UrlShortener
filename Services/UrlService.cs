@@ -38,5 +38,20 @@ namespace Services
             }
             return new KeyValuePair<string, int>(domen + '/' + RandomValue.ToString(), RandomValue);
         }
+
+        public KeyValuePair<string, int>? GenerateRandomTask()
+        {
+            Random rand = new Random();
+            int randValue = rand.Next(2, 8);
+
+            foreach (var task in StaticData.VerifyDict)
+            {
+                if (task.Key.Contains(randValue.ToString()))
+                {
+                    return task;
+                }
+            }
+            return null;
+        }
     }
 }
