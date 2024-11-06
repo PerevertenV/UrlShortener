@@ -1,0 +1,78 @@
+﻿@model URL
+
+<div class="d-flex justify-content-center align-items-center">
+	<div class="card shadow border-0 col-lg-6 col-md-8 col-sm-10">
+		<div class="card-header bg-primary  m-lg-0 py-3">
+			<div class="row">
+				<div class="col-12 text-center">
+					<h2 class="text-white py-2">@(Model.Id != 0 ? "Інформація про коротке URL" : "URL Shortener")</h2>
+				</div>
+			</div>
+		</div>
+		<div class="card-body p-4">
+			<form method="post" class="row">
+				<input asp-for="Id" hidden />
+				<div class="border p-3 mt-4">
+					<div class="form-floating py-2 col-12">
+						@if (Model.Id != 0)
+						{
+							<input asp-for="LongUrl" disabled class="form-control border-4 shadow" />
+						}
+						else
+						{
+							<div class="form-floating mb-3">
+								<input asp-for="LongUrl" class="form-control border-4 shadow" />
+								<span asp-validation-for="LongUrl" class="text-danger"></span>
+							</div>
+
+							@if (ViewBag.DomenList != null)
+							{
+								<div class="form-floating mb-3">
+									<select asp-for="domenId" asp-items="ViewBag.DomenList" class="form-select" aria-required="true" placeholder="domenId">
+										<option disabled selected>--Оберіть домен--</option>
+									</select>
+									<span asp-validation-for="domenId" class="text-danger"></span>
+								</div>
+							}
+						}
+						<label asp-for="LongUrl" class="ms-2"></label>
+					</div>
+					@if (Model.Id != 0)
+					{
+						<div class="form-floating py-2 col-12">
+							<input asp-for="ShortUrl" disabled class="form-control border-4 shadow" />
+							<label asp-for="ShortUrl" class="ms-2"></label>
+						</div>
+						<div class="form-floating py-2 col-12">
+							<input asp-for="UniqueCode" disabled class="form-control border-4 shadow" />
+							<label asp-for="UniqueCode" class="ms-2"></label>
+						</div>
+						<div class="form-floating py-2 col-12">
+							<input asp-for="User.Login" disabled class="form-control border-4 shadow" />
+							<label asp-for="User.Login" class="ms-2"></label>
+						</div>
+						<div class="form-floating py-2 col-12">
+							<input asp-for="CreatedDate" disabled class="form-control border-4 shadow" />
+							<label asp-for="CreatedDate" class="ms-2"></label>
+						</div>
+					}
+					<div class="row col-12">
+						@if (Model.Id == null || Model.Id == 0)
+						{
+							<button type="submit" class="btn btn-primary mt-2 form-control ms-3">Генерувати</button>
+						}
+						<a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3 form-control ms-3">Назад до списку</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+}
