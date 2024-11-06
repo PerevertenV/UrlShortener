@@ -5,7 +5,7 @@ using USh.DataAccess.Repository.IRepository;
 
 namespace USh.DataAccess.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    internal class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;
         internal DbSet<T> dbSet;

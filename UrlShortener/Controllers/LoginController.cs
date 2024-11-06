@@ -6,15 +6,18 @@ using System.Security.Claims;
 using USh.Models;
 using USh.DataAccess.Repository.IRepository;
 using USh.Models.Models;
+using Services.IServices;
 
 namespace CourseProjectDB.Areas.Customer.Controllers
 {
     public class LoginController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public LoginController(IUnitOfWork unitOfWork)
+        private readonly IService _service;
+        public LoginController(IUnitOfWork unitOfWork, IService service)
         {
-            _unitOfWork = unitOfWork;       
+            _unitOfWork = unitOfWork;     
+            _service = service;
         }
         public IActionResult Index()
         {
@@ -23,35 +26,17 @@ namespace CourseProjectDB.Areas.Customer.Controllers
         [HttpPost]
         public IActionResult Index(User obj) 
         {
-            bool success = true;
+            bool success = false;
             List<User> users = _unitOfWork.User.GetAll().ToList();
             foreach (var user in users) 
             {
                 if(user.Login == obj.Login) 
                 {
-                    string Decodet = _unitOfWork.User.DecryptString(user.Password);
-                    success = false;
+                    string Decodet = _service.User.DecryptString(user.Password);
+                    success = true;
                     if(obj.Password == Decodet) 
                     {
-                        var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, user.Login),
-                            new Claim(ClaimTypes.Role, user.role),
-                            new Claim("UserID", user.ID.ToString())
-                        };
-
-                        var claimsIdentity = new ClaimsIdentity(
-                            claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                        var authProperties = new AuthenticationProperties
-                        {
-                            IsPersistent = true 
-                        };
-
-                        HttpContext.SignInAsync(
-                           CookieAuthenticationDefaults.AuthenticationScheme,
-                           new ClaimsPrincipal(claimsIdentity),
-                           authProperties).GetAwaiter().GetResult();
+                        _service.SingIn.SignInUser(user.Login, user.role, user.ID);
 
                         TempData["success"] = "Ви ввійшли! 😀";
                         return Redirect("Home/Index");
@@ -63,11 +48,7 @@ namespace CourseProjectDB.Areas.Customer.Controllers
                     }
                 }
             }
-            if (success) 
-            {
-                ModelState.AddModelError("login", "Ми не знайшли користувача із таким username");
-                return View();
-            }
+            ModelState.AddModelError("login", "Ми не знайшли користувача із таким username");  
             return View();
         }
     }

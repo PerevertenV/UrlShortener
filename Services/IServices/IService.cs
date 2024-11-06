@@ -11,6 +11,7 @@ namespace Services.IServices
     {
 
         IUrlService Url { get; }
+        ISingInService SingIn { get; }
 
     }
 }

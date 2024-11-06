@@ -9,7 +9,6 @@ namespace USh.DataAccess.Repository.IRepository
 {
     public interface IUserRepository : IRepository<User>
     {
-        string PasswordHashCoder(string password);
-        public string DecryptString(string encryptedText);
+        
     }
 }

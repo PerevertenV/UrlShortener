@@ -7,24 +7,26 @@ using System.Text.RegularExpressions;
 using USh.DataAccess.Repository.IRepository;
 using USh.Models.Models;
 using USh.Utility;
+using Services.IServices;
 
 namespace UrlShortener.Controllers
 {
 	public class RegisterController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;
-        public RegisterController(IUnitOfWork unitOfWork)
+        private readonly IService _service;
+        public RegisterController(IUnitOfWork unitOfWork, IService service)
         {
-			_unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
+            _service = service;
 
-		}
-
+        }
 		public IActionResult Index()
 		{
 			Dictionary<string, string> list = new Dictionary<string, string>()
 			{
-				{ StaticData.Role_Admin, "Admin" },
-				{ StaticData.Role_Customer, "Customer" }
+				{ StaticData.Role_Admin, "Адмін" },
+				{ StaticData.Role_Customer, "Користувач" }
 			};
 			IEnumerable<SelectListItem> RoleList = list.Select(u => new SelectListItem
 			{
@@ -38,7 +40,9 @@ namespace UrlShortener.Controllers
 		public IActionResult Index(User obj, IFormCollection form)
 		{
 			string confirmPassword = form["confirmPassword"];
+
 			List<User> users = _unitOfWork.User.GetAll().ToList();
+
 			bool PasswordChecker = Regex.IsMatch(obj.Password, "[a-zA-Z]");
 			foreach (User user in users)
 			{
@@ -69,34 +73,19 @@ namespace UrlShortener.Controllers
 				var UserToAdding = new User
 				{
 					Login = obj.Login,
-					Password = _unitOfWork.User.PasswordHashCoder(obj.Password),
+					Password = _service.User.PasswordHashCoder(obj.Password),
 					role = WhichRole
 				};
 
 				_unitOfWork.User.Add(UserToAdding);
+
 				var UserId = _unitOfWork.User.GetFirstOrDefault(u => u.Login == obj.Login).ID;
+
 				if (!User.Identity.IsAuthenticated)
 				{
-					var claims = new List<Claim>
-					{
-						new Claim(ClaimTypes.Name, obj.Login),
-						new Claim(ClaimTypes.Role, WhichRole),
-						new Claim("UserID", UserId.ToString())
-					};
-
-					var claimsIdentity = new ClaimsIdentity(
-						claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-					var authProperties = new AuthenticationProperties
-					{
-						IsPersistent = true 
-					};
-
-					HttpContext.SignInAsync(
-					   CookieAuthenticationDefaults.AuthenticationScheme,
-					   new ClaimsPrincipal(claimsIdentity),
-					   authProperties).GetAwaiter().GetResult();
+					_service.SingIn.SignInUser(obj.Login, WhichRole, UserId);
 				}
+
 				TempData["success"] = "Акаунт було створено успішно! 😀";
 				return Redirect("Home/Index");
 			}

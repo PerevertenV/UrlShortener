@@ -9,7 +9,7 @@ using USh.Models.Models;
 
 namespace USh.DataAccess.Repository
 {
-	public class DomenRepository: Repository<Domen>, IDomenRepository
+	internal class DomenRepository: Repository<Domen>, IDomenRepository
 	{
 		private ApplicationDbContext _context;
 
