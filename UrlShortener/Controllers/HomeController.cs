@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Services.IServices;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Security.Cryptography.Pkcs;
@@ -19,12 +20,13 @@ namespace UrlShortener.Controllers
 	{
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IService _service;
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IService service)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-
+            _service = service;
         }
 
         public IActionResult Index()
