@@ -1,0 +1,37 @@
+﻿@model Domen
+
+<div class="d-flex justify-content-center align-items-center">
+	<div class="card shadow border-0 col-lg-6 col-md-8 col-sm-10">
+		<div class="card-header bg-primary  m-lg-0 py-3">
+			<div class="row">
+				<div class="col-12 text-center">
+					<h2 class="text-white py-2">Додати домен</h2>
+				</div>
+			</div>
+		</div>
+		<div class="card-body p-4">
+			<form method="post" class="row">
+				<input asp-for="Id" hidden />
+				<div class="border p-3 mt-4">
+					<div class="form-floating py-2 col-12">
+						<input asp-for="UserDomen" class="form-control border-4 shadow" />
+						<span asp-validation-for="UserDomen" class="text-danger"></span>
+						<label asp-for="UserDomen" class="ms-2"></label>
+					</div>
+					<div class="row col-12">
+						<button type="submit" class="btn btn-primary mt-2 form-control ms-3">Додати</button>
+						<a asp-controller="Domen" asp-action="Index" class="btn btn-secondary mt-3 form-control ms-3">Назад до списку</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+@section Scripts
+{
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+}

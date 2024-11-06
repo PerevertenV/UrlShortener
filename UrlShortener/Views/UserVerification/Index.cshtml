@@ -1,0 +1,44 @@
+﻿@model KeyValuePair<string, int>
+
+
+<div class="container text-center">
+    <h2>Перевірка на робота</h2>
+    <h5 class="mb-3">Будь ласка, пройдить спершу перевірку</h5>
+    <h5>Введіть число, яке є результатом:</h5>
+    <div class="mb-3">
+        <img src="~/img/@Model.Key" alt="Зображення завдання" class="img-fluid" style="max-width: 100%; height: auto;" />
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <input class="form-control border-2 shadow" type="number" id="inputNumber" placeholder="Введіть число" />
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" onclick="validateInput(@Model.Value)">Перевірити</button>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+    <script>
+        let attemptCounter = 3;
+
+        function validateInput(correctValue) {
+            const userInput = parseInt(document.getElementById('inputNumber').value);
+            if (userInput === correctValue) {
+                // Перенаправлення на іншу сторінку у випадку правильного значення
+                window.location.href = '/home/addCheckShortUrl';
+            } else {
+                attemptCounter--;
+                alert(`Неправильне значення. Залишилося спроб: ${attemptCounter}`);
+
+                if (attemptCounter <= 0) {
+                    // Перенаправлення на іншу сторінку у випадку відсутності спроб
+                    window.location.href = '/home/index';
+                }
+            }
+        }
+    </script>
+}
