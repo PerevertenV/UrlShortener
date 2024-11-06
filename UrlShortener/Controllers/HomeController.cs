@@ -101,8 +101,11 @@ namespace UrlShortener.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
+            var user = HttpContext.User;
+            var userId = user.FindFirstValue("UserID");
+
             List<URL> ObjectsFromDb = User.IsInRole("Admin") ? _unitOfWork.Url.GetAll().ToList()
-                : _unitOfWork.Url.GetAll(u => u.UserWhoCreatedUrlId == userId).ToList();
+                : _unitOfWork.Url.GetAll(u => u.UserWhoCreatedUrlId == int.Parse(userId)).ToList();
 
             return Json(new { data = ObjectsFromDb });
         }

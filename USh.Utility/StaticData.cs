@@ -20,5 +20,7 @@ namespace USh.Utility
             {"6.jpg", 0},
             {"7.jpg", 40}
         };
+        public const string Role_Admin = "Admin";
+        public const string Role_Customer = "Customer";
     }
 }
