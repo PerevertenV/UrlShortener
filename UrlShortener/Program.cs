@@ -6,6 +6,8 @@ using USh.DataAccess.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using USh.Utility;
 using System.IO;
+using Services.IServices;
+using Services;
 
 
 namespace UrlShortener
@@ -18,6 +20,7 @@ namespace UrlShortener
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -37,6 +40,7 @@ namespace UrlShortener
 
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IService, Service>();
 
             var app = builder.Build();
 

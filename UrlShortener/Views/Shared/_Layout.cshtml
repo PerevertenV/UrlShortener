@@ -30,7 +30,7 @@
                          @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="UserVerification" asp-action="Index">Нове посилання</a>
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="VerifiUser">Нове посилання</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Domen" asp-action="Index">Домени</a>
@@ -69,7 +69,7 @@
 
     <footer class="border-top footer text-center">
         <div class="container">
-            Url shortener -  <a class="text-black" asp-area="" asp-controller="Home" asp-action="Index">Про нас</a>
+            Маєте що сказати🤨? - <a class="text-black" href="https://forms.gle/2RuYcRgJVzyo9rye8">Ми раді вашим відгукам🙂</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -10,6 +10,7 @@ namespace Services.IServices
     public interface IService
     {
 
+        IUserService User { get; }
         IUrlService Url { get; }
         ISingInService SingIn { get; }
 

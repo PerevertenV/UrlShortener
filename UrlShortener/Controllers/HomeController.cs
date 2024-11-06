@@ -21,12 +21,14 @@ namespace UrlShortener.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IService _service;
+        protected int userId;
 
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IService service)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _service = service;
+            userId = _service.User.GetUserId();
         }
 
         public IActionResult Index()
@@ -41,20 +43,19 @@ namespace UrlShortener.Controllers
 
         public IActionResult AddCheckShortUrl(int? id) //add and check in one method
         {
-            var user = HttpContext.User;
-            var userId = user.FindFirstValue("UserID");
-
-            var UsersDomens = _unitOfWork.Domen
-                .GetAll(u => u.UserId == int.Parse(userId));
+            var UsersDomens = _unitOfWork.Domen.GetAll(u => u.UserId == userId);
 
             if (UsersDomens.Any())
             {
                 IEnumerable<SelectListItem> DomensList = UsersDomens
-                .Select(u => new SelectListItem
-                {
-                    Text = u.UserDomen,
-                    Value = u.Id.ToString()
-                });
+                    .Select(u => new SelectListItem
+                    {
+                        Text = u.UserDomen,
+                        Value = u.Id.ToString()
+                    }).Concat(new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = StaticData.ShortUrlTemplate, Value = "0" }
+                    });
 
                 ViewBag.DomenList = DomensList;
             }
@@ -63,7 +64,11 @@ namespace UrlShortener.Controllers
             if (id != null && id != 0)
             {
                 var ShortUrlFromDb = _unitOfWork.Url.GetFirstOrDefault(x => x.Id == id);
-                ShortUrlFromDb.User = _unitOfWork.User.GetFirstOrDefault(x => x.ID == ShortUrlFromDb.UserWhoCreatedUrlId);
+                
+                int ShortsUrlUserId = ShortUrlFromDb.UserWhoCreatedUrlId;
+
+                ShortUrlFromDb.User = _unitOfWork.User.GetFirstOrDefault(x => x.ID == ShortsUrlUserId);
+
                 return View(ShortUrlFromDb);
             }
             else
@@ -75,26 +80,31 @@ namespace UrlShortener.Controllers
         [HttpPost]
         public IActionResult AddCheckShortUrl(URL obj)
         {
-            List<string> LongUrlListFromDb = _unitOfWork.Url.GetAll()
-                .Select(u => u.LongUrl).ToList();
+            List<string> LongUrlListFromDb = _unitOfWork.Url.GetAll().Select(u => u.LongUrl).ToList();
+
             if (LongUrlListFromDb.Contains(obj.LongUrl))
             {
-                ModelState.AddModelError("LongUrl", "�� URL ��� ����");
+                ModelState.AddModelError("LongUrl", "Це URL уже існує");
                 return View(obj);
             }
-
-            obj.UniqueCode = _unitOfWork.Url.GenerateUniqueCode();
 
             string domen = obj.domenId == 0 ? StaticData.ShortUrlTemplate : _unitOfWork.Domen
                 .GetFirstOrDefault(u => u.Id == obj.domenId).UserDomen;
 
-            obj.ShortUrl = _unitOfWork.Url.CreateShortUrl(obj.UniqueCode, domen);
-            var user = HttpContext.User;
-            var userId = user.FindFirstValue("UserID");
-            obj.User = _unitOfWork.User.GetFirstOrDefault(u => u.ID == int.Parse(userId));
+            KeyValuePair<string, int> UrlAndUniqueCode = _service.Url.CreateShortUrl(domen);
+
+            obj.UniqueCode = UrlAndUniqueCode.Value;
+
+            obj.ShortUrl = UrlAndUniqueCode.Key;
+
+            obj.User = _unitOfWork.User.GetFirstOrDefault(u =>
+                u.ID == userId);
+
             obj.CreatedDate = DateOnly.FromDateTime(DateTime.Now);
+
             _unitOfWork.Url.Add(obj);
-            TempData["success"] = "������� URL ����������� ������";
+
+            TempData["success"] = "Коротке URL згенеровано успішно";
             return RedirectToAction(nameof(Index));
 
         }
