@@ -72,7 +72,7 @@ namespace UrlShortener.Controllers
                 .Select(u => u.LongUrl).ToList();
             if (LongUrlListFromDb.Contains(obj.LongUrl))
             {
-                ModelState.AddModelError("LongUrl", "Це URL уже існує");
+                ModelState.AddModelError("LongUrl", "пїЅпїЅ URL пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ");
                 return View(obj);
             }
 
@@ -87,7 +87,7 @@ namespace UrlShortener.Controllers
             obj.User = _unitOfWork.User.GetFirstOrDefault(u => u.ID == int.Parse(userId));
             obj.CreatedDate = DateOnly.FromDateTime(DateTime.Now);
             _unitOfWork.Url.Add(obj);
-            TempData["success"] = "Коротке URL згенеровано успішно";
+            TempData["success"] = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ URL пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ";
             return RedirectToAction(nameof(Index));
 
         }
@@ -97,7 +97,30 @@ namespace UrlShortener.Controllers
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
-		
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<URL> ObjectsFromDb = User.IsInRole("Admin") ? _unitOfWork.Url.GetAll().ToList()
+                : _unitOfWork.Url.GetAll(u => u.UserWhoCreatedUrlId == userId).ToList();
 
-	}
+            return Json(new { data = ObjectsFromDb });
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var UrlToBeDeleted = _unitOfWork.Url.GetFirstOrDefault(u => u.Id == id);
+            if (UrlToBeDeleted == null)
+            {
+                return Json(new { success = false, message = "РџРѕРјРёР»РєР° РїС–Рґ С‡Р°СЃ РІРёРґР°Р»РµРЅРЅСЏ" });
+            }
+
+            _unitOfWork.Url.Delete(UrlToBeDeleted);
+
+            return Json(new { success = true, message = "Url РІРёРґР°Р»РµРЅРѕ СѓСЃРїС–С€РЅРѕ" });
+        }
+        #endregion
+
+    }
 }
