@@ -35,8 +35,10 @@ namespace CourseProjectDB.Areas.Admin.Controllers
 			{
 				return Json(new { succes = false, message = "Помилка під час видалення" });
 			}
+
 			List<URL> urlsFromDB = _unitOfWork.Url.GetAll(u => u.UserWhoCreatedUrlId == id).ToList();
 			List<Domen> domenFromDB = _unitOfWork.Domen.GetAll(u => u.UserId == id).ToList();
+
 			if (urlsFromDB.Any())
 			{
 				foreach (URL url in urlsFromDB)
