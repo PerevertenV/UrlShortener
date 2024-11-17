@@ -26,14 +26,14 @@ namespace CourseProjectDB.Areas.Customer.Controllers
         [HttpPost]
         public IActionResult Index(User obj) 
         {
-            bool success = false;
+
             List<User> users = _unitOfWork.User.GetAll().ToList();
             foreach (var user in users) 
             {
                 if(user.Login == obj.Login) 
                 {
                     string Decodet = _service.User.DecryptString(user.Password);
-                    success = true;
+         
                     if(obj.Password == Decodet) 
                     {
                         _service.SingIn.SignInUser(user.Login, user.role, user.ID);

@@ -17,7 +17,7 @@ namespace USh.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -106,6 +106,15 @@ namespace USh.DataAccess.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Login = "admin",
+                            Password = "AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAXSviaP+MhkWco44Ognl56AAAAAACAAAAAAAQZgAAAAEAACAAAACyJUHBMGlxYBZfQLUph+MG7HAoGQ6KyvzExw3ymB9kdAAAAAAOgAAAAAIAACAAAADq+Qk6o9xCSGssQRqt1R7laWl5hfsbtySjX7t1VKpwAhAAAAAD/iqqmULivfii2YSOIstNQAAAAHKfj4xisTwSw1rEF0GSRBIHgHLlJEDU0vO4XIzWCB2PKOxxf97GpgjntB80KbRVjflFHhzugrpfTUV4ilBCvJY=",
+                            role = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("USh.Models.Models.Domen", b =>

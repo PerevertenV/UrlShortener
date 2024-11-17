@@ -80,6 +80,12 @@ namespace UrlShortener.Controllers
         [HttpPost]
         public IActionResult AddCheckShortUrl(URL obj)
         {
+            if (!obj.LongUrl.Contains("https://")) 
+            {
+                ModelState.AddModelError("LongUrl", "Невалідне довге посилання");
+                return View(obj);
+            }
+
             List<string> LongUrlListFromDb = _unitOfWork.Url.GetAll().Select(u => u.LongUrl).ToList();
 
             if (LongUrlListFromDb.Contains(obj.LongUrl))

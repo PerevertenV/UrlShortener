@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace USh.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class addTables : Migration
+    public partial class AddTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -70,6 +70,11 @@ namespace USh.DataAccess.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "User",
+                columns: new[] { "ID", "Login", "Password", "role" },
+                values: new object[] { 1, "admin", "AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAXSviaP+MhkWco44Ognl56AAAAAACAAAAAAAQZgAAAAEAACAAAACyJUHBMGlxYBZfQLUph+MG7HAoGQ6KyvzExw3ymB9kdAAAAAAOgAAAAAIAACAAAADq+Qk6o9xCSGssQRqt1R7laWl5hfsbtySjX7t1VKpwAhAAAAAD/iqqmULivfii2YSOIstNQAAAAHKfj4xisTwSw1rEF0GSRBIHgHLlJEDU0vO4XIzWCB2PKOxxf97GpgjntB80KbRVjflFHhzugrpfTUV4ilBCvJY=", "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Domens_UserId",
